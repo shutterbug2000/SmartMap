@@ -22,6 +22,7 @@ public class SmartMap extends JavaPlugin implements Listener {
     
     static MapRenderer MAP_RENDERER;
     static ShapedRecipe MAP_RECIPE;
+    static ItemStack MAP_ITEM;
     
     static {
     	
@@ -31,13 +32,13 @@ public class SmartMap extends JavaPlugin implements Listener {
     		}
     	};
     	
-    	ItemStack map = new ItemStack(Material.MAP, 1);
-		ItemMeta meta = map.getItemMeta();
+    	MAP_ITEM = new ItemStack(Material.MAP, 1);
+		ItemMeta meta = MAP_ITEM.getItemMeta();
 		meta.setLore(Arrays.asList("SmartMap", "0.0.1b"));
-		map.setItemMeta(meta);
+		MAP_ITEM.setItemMeta(meta);
 		
 		//Add custom recipe.
-        MAP_RECIPE = new ShapedRecipe(map);
+        MAP_RECIPE = new ShapedRecipe(MAP_ITEM);
         MAP_RECIPE.shape(
                         "GCG",
                         "RMR",
@@ -58,10 +59,12 @@ public class SmartMap extends JavaPlugin implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onItemCraft(CraftItemEvent event) {
-		if(event.getRecipe().equals(MAP_RECIPE)) {
-			getLogger().log(Level.INFO, "%s crafted a map.", event.getWhoClicked().getName());
+		getLogger().log(Level.INFO, "Detected craftitemevent for %1s", event.getWhoClicked().getName());
+		if(event.getCurrentItem().equals(MAP_ITEM)) {
+			getLogger().log(Level.INFO, "%1s crafted a map.", event.getWhoClicked().getName());
 			ItemStack mapItem = event.getCurrentItem();
 			MapView mapView = Bukkit.getServer().createMap(event.getWhoClicked().getWorld());
+			mapView.getRenderers().clear();
 			mapView.addRenderer(MAP_RENDERER);
 			mapItem.setDurability(mapView.getId());
 		}
