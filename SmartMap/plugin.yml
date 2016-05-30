@@ -1,0 +1,4 @@
+name: SmartMapBeta_Base
+version: 0.0.0
+description: The main goal of this plugin is to reward players with cash for defeating certain mobs, with the amount of cash being proportional to how difficult the mob was to kill.
+main: spishu.plugin.smartmap.SmartMap
