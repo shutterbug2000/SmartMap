@@ -1,6 +1,8 @@
 package spishu.plugin.smartmap;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -18,11 +20,13 @@ import org.bukkit.map.MapView;
 import org.bukkit.map.MinecraftFont;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class SmartMap extends JavaPlugin implements Listener {
+public class SmartMapPlugin extends JavaPlugin implements Listener {
     
     static MapRenderer MAP_RENDERER;
     static ShapedRecipe MAP_RECIPE;
     static ItemStack MAP_ITEM;
+    
+    Map<String,SmartMapApp> apps;
     
     static {
     	
@@ -52,17 +56,10 @@ public class SmartMap extends JavaPlugin implements Listener {
         
     }
 
-	public void onEnable(){
-		getServer().getPluginManager().registerEvents(this, this);
-		Bukkit.getServer().addRecipe(MAP_RECIPE); //Set up the recipe after onEnable so we know the server is entirely loaded.
-	}
-	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onItemCraft(CraftItemEvent event) {
-		getLogger().log(Level.INFO, "Detected craftitemevent for %1s", event.getWhoClicked().getName());
 		if(event.getCurrentItem().equals(MAP_ITEM)) {
-			getLogger().log(Level.INFO, "%1s crafted a map.", event.getWhoClicked().getName());
 			ItemStack mapItem = event.getCurrentItem();
 			MapView mapView = Bukkit.getServer().createMap(event.getWhoClicked().getWorld());
 			for(MapRenderer renderer : mapView.getRenderers()) mapView.removeRenderer(renderer);
@@ -74,9 +71,14 @@ public class SmartMap extends JavaPlugin implements Listener {
 		}
 	}
 	
-	public void registerApp(SmartMapApp app){
-		//Add the app to the system.
-		
+	public void onEnable(){
+		getServer().getPluginManager().registerEvents(this, this);
+		Bukkit.getServer().addRecipe(MAP_RECIPE); //Set up the recipe after onEnable so we know the server is entirely loaded.
+		apps = new HashMap<String,SmartMapApp>(); //Initialize app map
+	}
+
+	public void registerApp(String name, SmartMapApp app){
+		apps.put(name, app);
 	}
 	
 }
