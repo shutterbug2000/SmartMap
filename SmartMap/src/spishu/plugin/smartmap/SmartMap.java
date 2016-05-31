@@ -29,6 +29,7 @@ public class SmartMap extends JavaPlugin implements Listener {
     	MAP_RENDERER = new MapRenderer(){
     		public void render(MapView view, MapCanvas canvas, Player player) {
     			canvas.drawText(10, 0, MinecraftFont.Font, "Welcome to SmartMap OS!\n\n          V0.0.1 Beta!");
+    			
     		}
     	};
     	
@@ -67,7 +68,15 @@ public class SmartMap extends JavaPlugin implements Listener {
 			for(MapRenderer renderer : mapView.getRenderers()) mapView.removeRenderer(renderer);
 			mapView.addRenderer(MAP_RENDERER);
 			mapItem.setDurability(mapView.getId());
+			
+			//Use the API to load the operating system and boot it at startup.
+			
 		}
+	}
+	
+	public void registerApp(SmartMapApp app){
+		//Add the app to the system.
+		
 	}
 	
 }
