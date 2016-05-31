@@ -64,7 +64,7 @@ public class SmartMap extends JavaPlugin implements Listener {
 			getLogger().log(Level.INFO, "%1s crafted a map.", event.getWhoClicked().getName());
 			ItemStack mapItem = event.getCurrentItem();
 			MapView mapView = Bukkit.getServer().createMap(event.getWhoClicked().getWorld());
-			mapView.getRenderers().clear();
+			for(MapRenderer renderer : mapView.getRenderers()) mapView.removeRenderer(renderer);
 			mapView.addRenderer(MAP_RENDERER);
 			mapItem.setDurability(mapView.getId());
 		}
