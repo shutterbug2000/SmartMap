@@ -3,9 +3,12 @@ package spishu.plugin.smartmap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -60,24 +63,63 @@ public class SmartMapPlugin extends JavaPlugin implements Listener {
 	public void onItemCraft(CraftItemEvent event) {
 		if(event.getCurrentItem().equals(MAP_ITEM)) {
 			ItemStack mapItem = event.getCurrentItem();
-			MapView mapView = Bukkit.getServer().createMap(event.getWhoClicked().getWorld());
-			for(MapRenderer renderer : mapView.getRenderers()) mapView.removeRenderer(renderer);
-			mapView.addRenderer(MAP_RENDERER);
-			mapItem.setDurability(mapView.getId());
-			
-			//Use the API to load the operating system and boot it at startup.
-			
+			MapView map = Bukkit.getServer().createMap(getServer().getWorlds().get(0)); //Arbitrary world
+			clearRenderers(map);
+			mapItem.setDurability(map.getId());
 		}
 	}
 	
-	public void onEnable(){
+	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
-		Bukkit.getServer().addRecipe(MAP_RECIPE); //Set up the recipe after onEnable so we know the server is entirely loaded.
+		getServer().addRecipe(MAP_RECIPE); //Set up the recipe after onEnable so we know the server is entirely loaded.
 		apps = new HashMap<String,SmartMapApp>(); //Initialize app map
 	}
 
-	public void registerApp(String name, SmartMapApp app){
+	public void registerApp(String name, SmartMapApp app) {
+		getLogger().log(Level.INFO, "Registered app %1s", name);
 		apps.put(name, app);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void switchApp(ItemStack mapItem, SmartMapApp app) {
+		MapView map = getServer().getMap(mapItem.getDurability());
+		clearRenderers(map);
+		map.addRenderer(app);
+	}
+	
+	public void switchApp(ItemStack mapItem, String appName) {
+		switchApp(mapItem, apps.get(appName));
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("switchapp")) {
+			if(args.length < 1) sender.sendMessage("Invalid number of arguments.");
+			else {
+				if(!(sender instanceof Player)) sender.sendMessage("Only players may use this command.");
+				else {
+					if(!apps.containsKey(args[0])) sender.sendMessage("The app specified does not exist.");
+					else {
+						Player player = (Player) sender;
+						ItemStack mapItem = player.getInventory().getItemInMainHand();
+						if(mapItem.getType() != Material.MAP) sender.sendMessage("You must be holding a map.");
+						else switchApp(mapItem, args[0]);
+					}
+				}
+			}
+		} else if(cmd.getName().equalsIgnoreCase("listapps")) {
+			for(String name : apps.keySet()) {
+				sender.sendMessage(name);
+			}
+		}
+		return true; 
+	}
+
+	
+	static void clearRenderers(MapView map) {
+		for(MapRenderer renderer : map.getRenderers()) {
+			map.removeRenderer(renderer);
+		}
 	}
 	
 }
