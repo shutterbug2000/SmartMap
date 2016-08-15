@@ -2,6 +2,7 @@ package spishu.plugin.smartmap;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -22,13 +23,17 @@ import org.bukkit.map.MapView;
 import org.bukkit.map.MinecraftFont;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.gson.Gson;
+
 public class SmartMapPlugin extends JavaPlugin implements Listener {
     
     static MapRenderer MAP_RENDERER;
     static ShapedRecipe MAP_RECIPE;
     static ItemStack MAP_ITEM;
+    static Gson GSON;
     
     Map<String,SmartMapApp> apps;
+    List<Integer> maps;
     
     static {
     	
@@ -56,6 +61,8 @@ public class SmartMapPlugin extends JavaPlugin implements Listener {
         MAP_RECIPE.setIngredient('D', Material.DIAMOND);
         MAP_RECIPE.setIngredient('G', Material.GOLD_INGOT);
         
+        GSON = new Gson();
+        
     }
 
 	@SuppressWarnings("deprecation")
@@ -69,10 +76,24 @@ public class SmartMapPlugin extends JavaPlugin implements Listener {
 		}
 	}
 	
+	//TODO API for filesystem
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().addRecipe(MAP_RECIPE); //Set up the recipe after onEnable so we know the server is entirely loaded.
 		apps = new HashMap<String,SmartMapApp>(); //Initialize app map
+		
+		/*TODO map cache
+		File dir = getDataFolder(), mapCacheFile = new File(dir, "map-cache.json");
+		dir.mkdir();
+		if(!mapCacheFile.exists()) {
+			try {
+				java.nio.file.Files.copy(getClass().getResourceAsStream("res/map-cache.json"), mapCacheFile.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		*/
+
 	}
 
 	public void registerApp(String name, SmartMapApp app) {
