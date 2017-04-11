@@ -1,6 +1,5 @@
 package spishu.plugin.smartmap;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -161,6 +159,7 @@ public class SmartMapPlugin extends JavaPlugin implements Listener {
 		switchApp(mapItem, apps.get(appName));
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("switchapp")) {
@@ -182,7 +181,7 @@ public class SmartMapPlugin extends JavaPlugin implements Listener {
 				sender.sendMessage(name);
 			}
 		} else if(cmd.getName().equalsIgnoreCase("returntohome")) {
-			ItemStack mapItem = ((Player) sender).getItemInHand();
+			ItemStack mapItem = ((Player) sender).getInventory().getItemInMainHand();
 			MapView map = Bukkit.getServer().createMap(getServer().getWorlds().get(0)); //Arbitrary world
 			clearRenderers(map);
 			mapItem.setDurability(map.getId());
