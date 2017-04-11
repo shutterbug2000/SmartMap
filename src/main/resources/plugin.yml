@@ -8,4 +8,6 @@ commands:
    listapps:
       description: Lists all registered apps
       usage: /listapps
-
+   returntohome:
+      description: Returns to the SmartMap Home Screen
+      usage: /returntohome
