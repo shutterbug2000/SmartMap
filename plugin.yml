@@ -1,0 +1,13 @@
+name: SmartMapBeta_Base
+version: 0.0.0
+main: spishu.plugin.smartmap.SmartMapPlugin
+commands:
+   switchapp:
+      description: Switches app of an active smart map, determined by currently held item.
+      usage: /switchapp <appname>
+   listapps:
+      description: Lists all registered apps
+      usage: /listapps
+   returntohome:
+      description: Returns to the SmartMap Home Screen
+      usage: /returntohome
